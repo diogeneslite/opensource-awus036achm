@@ -6,7 +6,15 @@ I included the option to raise the chipset's power to the maximum, so that we ca
 
 You can switch between, and toggle on or off these feature using Device Manager.
 
-That was a lot of typing lol now I leave you with the boring AI project description.
+That was a lot of typing lol now I leave you with the boring AI project description:
+
+
+
+
+
+
+
+
 
 High-performance, open-source Windows 11 driver for the **ALFA Network AWUS036ACHM** USB Wi-Fi adapter (MediaTek MT7610U chipset), engineered for **peak throughput (802.11ac VHT80 433.3 Mbps)** and **maximum Front-End Module (FEM) power delivery**.
 
