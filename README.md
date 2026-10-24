@@ -6,6 +6,10 @@ I included the option to raise the chipset's power to the maximum, so that we ca
 
 You can switch between, and toggle on or off these feature using Device Manager.
 
+# PLEASE MIND THAT THE DRIVER ISN'T SIGNED YET, SO YOU WILL ONLY BE TO INSTALL IT IN WINDOWS USING TEST MODE
+
+# A SIGNED VERSION IS COMING SOON
+
 That was a lot of typing lol now I leave you with the boring AI project description:
 
 
