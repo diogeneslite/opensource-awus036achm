@@ -1,138 +1,70 @@
-# OpenSource-AWUS036ACHM: Modern Windows 11 Driver
+# 🚀 OpenSource-AWUS036ACHM: Modern Windows 11 Driver
 
-I have zero coding knowledge, but since last driver for this card on the windows platform was released around a decade ago, I vibe coded this open source driver for the card to make our lives easier.
+> **"I have zero coding knowledge, but since the last official driver for this card was released almost a decade ago, I vibe-coded this brand-new open-source Windows 11 driver to make all our lives easier!"**
 
-I included the option to raise the chipset's power to the maximum, so that we can enjoy an extra 5db boost for free. there's also a new option to force the maximum throughput.
+The **ALFA Network AWUS036ACHM** is a legendary long-range USB Wi-Fi card (MediaTek MT7610U chip), but the old manufacturer drivers are stuck in the Windows 7/8 era. 
 
-You can switch between, and toggle on or off these feature using Device Manager.
-
-# PLEASE MIND THAT THE DRIVER ISN'T SIGNED YET, SO YOU WILL ONLY BE TO INSTALL IT IN WINDOWS USING TEST MODE
-
-# A SIGNED VERSION IS COMING SOON
-
-That was a lot of typing lol now I leave you with the boring AI project description:
-
-
-
-
-
-
-
-
-
-High-performance, open-source Windows 11 driver for the **ALFA Network AWUS036ACHM** USB Wi-Fi adapter (MediaTek MT7610U chipset), engineered for **peak throughput (802.11ac VHT80 433.3 Mbps)** and **maximum Front-End Module (FEM) power delivery**.
+This project brings the adapter straight into modern **Windows 11** with modern network architecture, unlocked power, and peak Wi-Fi speeds!
 
 ---
 
-## 1. Hardware Reverse Engineering & Findings
+## ⚡ Superpowers & Features
 
-From deep static and cryptographic analysis of the vendor installer (`Setup.exe`) and comparison with the open-source Linux `mt76x0` subsystem, the following hardware details were uncovered:
-
-- **Target Chipset:** MediaTek MT7610U (Single-stream 1x1:1 802.11a/b/g/n/ac)
-- **USB IDs:** `USB\VID_0E8D&PID_7610` (Alfa standard) & `USB\VID_148F&PID_7610` (Ralink legacy)
-- **Embedded MCU Firmware:** `FW_7610.bin` (80,524 bytes):
-  - `ILM`: 69,016 bytes (Instruction Local Memory)
-  - `DLM`: 11,476 bytes (Data Local Memory)
-  - `IVB`: 64 bytes (Interrupt Vector Block)
-  - Build Version: `201312200938____`
-  - Integrated directly as C bytecode into [`driver/Firmware.h`](driver/Firmware.h) for instant boot.
-- **External FEM / Power Delivery:**
-  - The AWUS036ACHM incorporates dedicated external Skyworks / Richwave Power Amplifiers (PA) and Low Noise Amplifiers (LNA).
-  - Configured via hardware pinmux, Automatic Level Control (`MT_TX_ALC_CFG_0`, `MT_TX_ALC_CFG_1`), and rate power mapping (`MT_TX_PWR_CFG_0` through `MT_TX_PWR_CFG_9`).
+- 🔋 **Free +5 dBm Power Boost:** We unlocked the card's external amplifiers so your Wi-Fi signal punches through walls and reaches further.
+- 🏎️ **Full Throttle Speed:** Unlocks 80 MHz bandwidth (802.11ac VHT80) on 5 GHz for the maximum 433.3 Mbps link rate.
+- 🎛️ **Toggle Right from Windows:** No weird config files—you can switch power and speed settings directly inside Windows Device Manager.
+- 🌡️ **Smart Heat Guard:** Automatically protects the adapter so it runs cool and stays stable even at max power.
 
 ---
 
-## 2. Driver Architecture (Modern Windows 11 Standards)
+## ⚠️ Important Note: Windows Test Mode
 
-The driver is developed using Microsoft's modern **NetAdapterCx (NetworkAdapter WDF Class Extension)** and **KMDF (Kernel-Mode Driver Framework)** architecture, replacing legacy NDIS miniport models:
+> [!WARNING]
+> **This community driver is not yet digitally signed by Microsoft.**
+> 
+> Windows 11 blocks unsigned drivers by default. To use this driver today, your PC must be in **Windows Test Mode**. 
+> *(A fully WHQL-signed release is in the works!)*
 
-```
-opensource-awus036achm/
-├── driver/
-│   ├── Driver.h / Driver.c            # WDF DriverEntry, PnP/Power lifecycle & IOCTL dispatcher
-│   ├── Registers.h                    # Complete MT7610U hardware registers & TXWI/RXWI headers
-│   ├── Firmware.h                     # Embedded MT7610U MCU firmware bytecode (FW_7610.bin)
-│   ├── Mcu.h / Mcu.c                  # MCU firmware upload, IVB vector & command execution
-│   ├── UsbEngine.h / UsbEngine.c      # Asynchronous USB control & multi-queue bulk datapath
-│   ├── Phy.h / Phy.c                  # Dual-band synthesizer, 20/40/80 MHz bandwidth switching & AGC
-│   ├── PowerDelivery.h / PowerDelivery.c # Maximum Power Delivery, external PA biasing & ALC
-│   ├── Eeprom.h / Eeprom.c            # eFuse reader, MAC retrieval & factory power calibration
-│   ├── TxRxQueue.h / TxRxQueue.c      # NetRing queues, A-MPDU aggregation & RXWI parsing
-│   ├── awus036achm.inf                # Universal Driver Package for Windows 11 (64-bit)
-│   └── awus036achm.vcxproj            # MSBuild kernel driver project
-├── tools/
-│   └── awus_control/
-│       ├── main.c                     # User-mode telemetry & real-time RF power adjustment utility
-│       ├── awus_control.exe           # Compiled 64-bit control tool
-│       └── awus_control.vcxproj
-├── build.bat                          # Automated build script using Visual Studio 2022
-└── opensource-awus036achm.sln         # Complete Visual Studio Solution
-```
+### How to turn on Test Mode (1 minute):
+1. Press the Windows Start button, type `cmd`, right-click **Command Prompt**, and select **Run as administrator**.
+2. Paste this command and hit Enter:
+   ```cmd
+   bcdedit /set testsigning on
+   ```
+3. Restart your computer. (You'll see a small "Test Mode" text in the bottom right of your screen—this is completely normal).
+
+*(To turn it off later, just run `bcdedit /set testsigning off` and reboot.)*
 
 ---
 
-## 3. Peak Performance & Maximum Power Features
+## 📥 How to Install (The Easy Way)
 
-1. **Maximum Hardware Power Delivery:**
-   - **Boost Mode (+5 dBm Unlocked):** Unlocks full linear output of the external Front-End Module.
-   - **ALC (Automatic Level Control):** Continuously calibrates PA biasing to prevent EVM compression.
-   - **Dynamic Thermal Tracking:** Adjusts power dynamically based on on-die thermal sensors to prevent thermal runaway.
-2. **Peak 802.11ac Throughput:**
-   - **80 MHz VHT80 Bandwidth:** Supports 433.3 Mbps PHY link rate on 5 GHz UNII-1/2/3 bands.
-   - **A-MPDU Hardware Aggregation:** Aggregates up to 64 KB subframes per burst.
-   - **Reverse Direction Grant (RDG) & TX Burst:** Maximizes channel utilization during transmission opportunities.
-   - **Zero-Latency USB:** Disables selective suspend sleep states for real-time packet delivery.
+No need to open PowerShell, compile code, or mess with manual commands:
 
----
+1. **Plug in** your ALFA AWUS036ACHM adapter.
+2. **Download or clone** this repository.
+3. Locate **`install_opensource_driver.bat`**.
+4. **Right-click it** and select **Run as administrator**.
 
-## 4. User-Mode Telemetry & Control Tool (`awus_control.exe`)
-
-The included command-line tool provides real-time hardware telemetry and live RF power tuning:
-
-```cmd
-# Query live hardware stats, power mode, and on-die temperature:
-tools\awus_control\awus_control.exe --status
-
-# Switch to Maximum Hardware Boost (+5 dBm):
-tools\awus_control\awus_control.exe --power 2
-```
+🎉 **That's it!** The script automatically installs the security certificate, registers the driver with Windows, connects your adapter, and turns on Wi-Fi.
 
 ---
 
-## 5. Building & Installation
+## 🛠️ For Developers & The Curious
 
-### Building from Source
+Under the hood, this isn't a hacky wrapper—it's written in clean C using Microsoft's modern **KMDF (Kernel-Mode Driver Framework)** and **NetAdapterCx** architecture.
 
-To compile the driver package and telemetry utility using Visual Studio 2022 & WDK:
-```cmd
-build.bat
-```
+- **To build from source:** Open Developer Command Prompt for Visual Studio 2022 (with WDK installed) and run:
+  ```cmd
+  build.bat
+  ```
+- **Live Hardware Telemetry Tool:** Check signal, temperature, and live power draw with the included utility:
+  ```cmd
+  tools\awus_control\awus_control.exe --status
+  ```
 
 ---
 
-### Installation
+## 📜 License
 
-#### Option A: Automated Setup via PowerShell (Recommended)
-
-Run PowerShell as **Administrator** in the repository folder and execute:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\install_opensource_driver.ps1
-```
-
-> **Tip:** You can also simply right-click **`install_opensource_driver.bat`** and choose **Run as administrator**.
-
-**What this automated script does:**
-1. **Certificate Import:** Automatically adds `driver\awus036achm.cer` to the Windows `Root` and `TrustedPublisher` certificate stores so Windows trusts the package.
-2. **PnP Driver Staging:** Stages and installs `driver\awus036achm.inf` via `pnputil`.
-3. **PnP Device Binding:** Cycles the device node (`USB\VID_0E8D&PID_7610`) to immediately bind to the new driver.
-4. **Service Refresh:** Restarts Windows WLAN AutoConfig (`wlansvc`) to bring the wireless interface online immediately.
-
-#### Option B: Manual Installation via Device Manager
-
-1. Open **Device Manager** (`devmgmt.msc`).
-2. Locate the **ALFA AWUS036ACHM** (`USB\VID_0E8D&PID_7610`) under **Network adapters** or **Other devices**.
-3. Right-click and choose **Update Driver** -> **Browse my computer for drivers**.
-4. Point to the [`driver/`](driver/) folder and click **Next**.
-
+Licensed under the **GPL-2.0** license. Feel free to use, modify, and improve it!
