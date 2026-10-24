@@ -1,5 +1,13 @@
 # OpenSource-AWUS036ACHM: Modern Windows 11 Driver
 
+I have zero coding knowledge, but since last driver for this card on the windows platform was released around a decade ago, I vibe coded this open source driver for the card to make our lives easier.
+
+I included the option to raise the chipset's power to the maximum, so that we can enjoy an extra 5db boost for free. there's also a new option to force the maximum throughput.
+
+You can switch between, and toggle on or off these feature using Device Manager.
+
+That was a lot of typing lol now I leave you with the boring AI project description.
+
 High-performance, open-source Windows 11 driver for the **ALFA Network AWUS036ACHM** USB Wi-Fi adapter (MediaTek MT7610U chipset), engineered for **peak throughput (802.11ac VHT80 433.3 Mbps)** and **maximum Front-End Module (FEM) power delivery**.
 
 ---
@@ -15,7 +23,7 @@ From deep static and cryptographic analysis of the vendor installer (`Setup.exe`
   - `DLM`: 11,476 bytes (Data Local Memory)
   - `IVB`: 64 bytes (Interrupt Vector Block)
   - Build Version: `201312200938____`
-  - Integrated directly as C bytecode into [`driver/Firmware.h`](file:///C:/Users/moham/.gemini/antigravity-ide/scratch/opensource-awus036achm/driver/Firmware.h) for instant boot.
+  - Integrated directly as C bytecode into [`driver/Firmware.h`](opensource-awus036achm/driver/Firmware.h) for instant boot.
 - **External FEM / Power Delivery:**
   - The AWUS036ACHM incorporates dedicated external Skyworks / Richwave Power Amplifiers (PA) and Low Noise Amplifiers (LNA).
   - Configured via hardware pinmux, Automatic Level Control (`MT_TX_ALC_CFG_0`, `MT_TX_ALC_CFG_1`), and rate power mapping (`MT_TX_PWR_CFG_0` through `MT_TX_PWR_CFG_9`).
@@ -88,4 +96,4 @@ build.bat
 To install the driver on Windows 11:
 1. Open **Device Manager**.
 2. Locate the **ALFA AWUS036ACHM** (`USB\VID_0E8D&PID_7610`).
-3. Select **Update Driver** -> **Browse my computer for drivers** -> Point to [`driver/`](file:///C:/Users/moham/.gemini/antigravity-ide/scratch/opensource-awus036achm/driver).
+3. Select **Update Driver** -> **Browse my computer for drivers** -> Point to [`driver/`](/opensource-awus036achm/driver).
