@@ -1,0 +1,137 @@
+;
+; ALFA AWUS036ACHM Open-Source Windows 11 Driver Package
+; Copyright (C) 2026 OpenSource-AWUS036ACHM Project
+;
+
+[Version]
+Signature               = "$WINDOWS NT$"
+Class                   = Net
+ClassGUID               = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider                = %ProviderString%
+CatalogFile             = awus036achm.cat
+DriverVer = 10/22/2026,16.43.11.452
+PnpLockdown             = 1
+
+[Manufacturer]
+%ManufacturerString%    = Standard, NTamd64.10.0...16299
+
+[Standard.NTamd64.10.0...16299]
+%Awus036achm.DeviceDesc% = AwusInstall, USB\VID_0E8D&PID_7610
+%Awus036achm.DeviceDesc% = AwusInstall, USB\VID_148F&PID_7610
+
+[DefaultInstall.NTamd64]
+Characteristics         = 0x84                  ; NCF_PHYSICAL | NCF_HAS_UI
+BusType                 = 15                    ; USB
+AddReg                  = AwusConfig.reg
+CopyFiles               = DriverFiles
+*IfType                 = 71                    ; IF_TYPE_IEEE80211
+*MediaType              = 16                    ; NdisMediumNative802_11
+*PhysicalMediaType      = 9                     ; NdisPhysicalMediumNative802_11
+
+[DefaultInstall.NTamd64.Services]
+AddService              = Awus036achm, 2, AwusService_Inst, AwusEventLog_Inst
+
+[AwusInstall.NT]
+Include=netvwifibus.inf
+Needs=VWiFiBus.CopyFiles
+Characteristics         = 0x84                  ; NCF_PHYSICAL | NCF_HAS_UI
+BusType                 = 15                    ; USB
+AddReg                  = AwusConfig.reg
+CopyFiles               = DriverFiles
+*IfType                 = 71                    ; IF_TYPE_IEEE80211
+*MediaType              = 16                    ; NdisMediumNative802_11
+*PhysicalMediaType      = 9                     ; NdisPhysicalMediumNative802_11
+
+[AwusInstall.NT.Services]
+Include=netvwifibus.inf
+Needs=VWiFiBus.Services
+AddService              = Awus036achm, 2, AwusService_Inst, AwusEventLog_Inst
+
+[AwusInstall.NT.HW]
+Include=netvwifibus.inf
+Needs=VWiFiBus.PnPFilterRegistration
+
+
+[DriverFiles]
+awus036achm.sys
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+awus036achm.sys = 1,,
+
+[DestinationDirs]
+DefaultDestDir          = 12                    ; System32\drivers
+DriverFiles             = 12                    ; System32\drivers
+
+;
+; Registry Configuration for Peak Performance and Maximum Power Delivery
+;
+[AwusConfig.reg]
+HKR, Ndi,                       Service,            0, "Awus036achm"
+HKR, Ndi\Interfaces,            UpperRange,         0, "ndis5"
+HKR, Ndi\Interfaces,            LowerRange,         0, "wlan,ethernet,vwifi"
+
+; Maximum Power Delivery & External FEM Settings
+HKR, ,                          MaxPowerBoost,      0x10001, 2          ; 0: Default, 1: High (+3dBm), 2: Max Boost (+5dBm)
+HKR, ,                          ExtPaLnaEnable,     0x10001, 1          ; Enable External High-Power Skyworks/Richwave PA & LNA
+HKR, ,                          ExtPwrTable,        0x10001, 1          ; External Power Calibration Table
+HKR, ,                          CountryTargetTxPowerMode, 0, "4"        ; Maximum Power Target Table (Mode 4)
+HKR, ,                          TxAlcMode,          0x10001, 1          ; Hardware Automatic Level Control
+HKR, ,                          ThermalThrottling,  0x10001, 1          ; Dynamic Thermal Protection
+
+; Peak Performance & VHT80 Settings
+HKR, ,                          WirelessMode,       0, "11"             ; 802.11a/b/g/n/ac VHT Dual-Band
+HKR, ,                          Vht80Enable,        0x10001, 1          ; 80 MHz Bandwidth for 433.3 Mbps PHY
+HKR, ,                          TXBurst,            0, "1"              ; Burst Transmit Enabled
+HKR, ,                          ShortSlot,          0, "1"              ; Short Slot Time
+HKR, ,                          RDG,                0, "1"              ; Reverse Direction Grant
+HKR, ,                          RxEnhanceEnable,    0, "1"              ; Hardware RX Acceleration
+HKR, ,                          TxBf,               0, "1"              ; Transmit Beamforming Enabled
+HKR, ,                          EDCCAEnable,        0, "0"              ; Prevent backoff throttling for maximum range
+HKR, ,                          BACapability,       0x10001, 0x0b034040 ; Block ACK & Aggregation
+HKR, ,                          *SelectiveSuspend,  0, "0"              ; Disable Selective Suspend to prevent latency jitter
+
+; User-configurable Advanced Properties in Device Manager
+HKR, NDI\params\MaxPowerBoost,          ParamDesc,  0, %MaxPowerBoost_Str%
+HKR, NDI\params\MaxPowerBoost,          type,       0, "enum"
+HKR, NDI\params\MaxPowerBoost,          default,    0, "2"
+HKR, NDI\params\MaxPowerBoost\enum,     "0",        0, %Power_Default%
+HKR, NDI\params\MaxPowerBoost\enum,     "1",        0, %Power_High%
+HKR, NDI\params\MaxPowerBoost\enum,     "2",        0, %Power_MaxBoost%
+
+HKR, NDI\params\Vht80Enable,            ParamDesc,  0, %Vht80Enable_Str%
+HKR, NDI\params\Vht80Enable,            type,       0, "enum"
+HKR, NDI\params\Vht80Enable,            default,    0, "1"
+HKR, NDI\params\Vht80Enable\enum,       "0",        0, %Disabled%
+HKR, NDI\params\Vht80Enable\enum,       "1",        0, %Enabled%
+
+[AwusService_Inst]
+DisplayName             = %Awus036achm.DeviceDesc%
+ServiceType             = 1                     ; SERVICE_KERNEL_DRIVER
+StartType               = 3                     ; SERVICE_DEMAND_START
+ErrorControl            = 1                     ; SERVICE_ERROR_NORMAL
+ServiceBinary           = %12%\awus036achm.sys
+LoadOrderGroup          = NDIS
+
+[AwusEventLog_Inst]
+AddReg                  = AwusEventLog_AddReg
+
+[AwusEventLog_AddReg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported,   0x00010001, 7
+
+[Strings]
+DiskName                = "ALFA AWUS036ACHM Installation Disk"
+ProviderString          = "OpenSource-AWUS036ACHM"
+ManufacturerString      = "ALFA Network / MediaTek"
+Awus036achm.DeviceDesc  = "Alfa AWUS036ACHM WiFi 6"
+MaxPowerBoost_Str       = "RF Transmit Power Delivery Level"
+Power_Default           = "Standard (Regulatory Default)"
+Power_High              = "High Performance (+3 dBm)"
+Power_MaxBoost          = "Maximum Hardware Boost (+5 dBm, Unlocked)"
+Vht80Enable_Str         = "802.11ac VHT 80MHz Channel Width"
+Disabled                = "Disabled"
+Enabled                 = "Enabled (Peak 433 Mbps)"
+

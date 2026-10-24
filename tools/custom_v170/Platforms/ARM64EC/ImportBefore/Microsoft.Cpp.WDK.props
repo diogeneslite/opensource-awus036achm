@@ -1,0 +1,14 @@
+<!--
+***********************************************************************************************
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="ValidPlatformType">
+    <Import Condition="Exists('$(VCTargetsPath)\Platforms\$(Platform)\PlatformUpgrade\Microsoft.Cpp.WDK.PlatformUpgrade.props')" Project="$(VCTargetsPath)\Platforms\$(Platform)\PlatformUpgrade\Microsoft.Cpp.WDK.PlatformUpgrade.props"/>
+
+  <Target Name="ValidPlatformType">
+    <Error Text="'$(Platform)' is not supported for Platform Toolset type '$(PlatformToolset)' "
+           Condition="'$(Platform)' == 'ARM64EC' and '$(PlatformToolset)' == 'WindowsKernelModeDriver10.0'" />
+  </Target>
+</Project>

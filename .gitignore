@@ -1,0 +1,29 @@
+# Visual Studio & Windows Driver Kit Build Output
+.vs/
+bin/
+obj/
+x64/
+x86/
+ARM64/
+Debug/
+Release/
+
+# Build artifacts & intermediate files
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.lastcodeanalysissucceeded
+*.ipch
+*.log
+*.recipe
+*.opendb
+*.db
+
+# User-specific project settings
+*.user
+*.suo
+
+# Large temporary installer packages
+WDK.vsix
+manifest.json
