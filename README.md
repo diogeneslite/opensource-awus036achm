@@ -23,7 +23,7 @@ From deep static and cryptographic analysis of the vendor installer (`Setup.exe`
   - `DLM`: 11,476 bytes (Data Local Memory)
   - `IVB`: 64 bytes (Interrupt Vector Block)
   - Build Version: `201312200938____`
-  - Integrated directly as C bytecode into [`driver/Firmware.h`](opensource-awus036achm/driver/Firmware.h) for instant boot.
+  - Integrated directly as C bytecode into [`driver/Firmware.h`](driver/Firmware.h) for instant boot.
 - **External FEM / Power Delivery:**
   - The AWUS036ACHM incorporates dedicated external Skyworks / Richwave Power Amplifiers (PA) and Low Noise Amplifiers (LNA).
   - Configured via hardware pinmux, Automatic Level Control (`MT_TX_ALC_CFG_0`, `MT_TX_ALC_CFG_1`), and rate power mapping (`MT_TX_PWR_CFG_0` through `MT_TX_PWR_CFG_9`).
@@ -89,11 +89,38 @@ tools\awus_control\awus_control.exe --power 2
 
 ## 5. Building & Installation
 
-To build the project:
+### Building from Source
+
+To compile the driver package and telemetry utility using Visual Studio 2022 & WDK:
 ```cmd
 build.bat
 ```
-To install the driver on Windows 11:
-1. Open **Device Manager**.
-2. Locate the **ALFA AWUS036ACHM** (`USB\VID_0E8D&PID_7610`).
-3. Select **Update Driver** -> **Browse my computer for drivers** -> Point to [`driver/`](/opensource-awus036achm/driver).
+
+---
+
+### Installation
+
+#### Option A: Automated Setup via PowerShell (Recommended)
+
+Run PowerShell as **Administrator** in the repository folder and execute:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\install_opensource_driver.ps1
+```
+
+> **Tip:** You can also simply right-click **`install_opensource_driver.bat`** and choose **Run as administrator**.
+
+**What this automated script does:**
+1. **Certificate Import:** Automatically adds `driver\awus036achm.cer` to the Windows `Root` and `TrustedPublisher` certificate stores so Windows trusts the package.
+2. **PnP Driver Staging:** Stages and installs `driver\awus036achm.inf` via `pnputil`.
+3. **PnP Device Binding:** Cycles the device node (`USB\VID_0E8D&PID_7610`) to immediately bind to the new driver.
+4. **Service Refresh:** Restarts Windows WLAN AutoConfig (`wlansvc`) to bring the wireless interface online immediately.
+
+#### Option B: Manual Installation via Device Manager
+
+1. Open **Device Manager** (`devmgmt.msc`).
+2. Locate the **ALFA AWUS036ACHM** (`USB\VID_0E8D&PID_7610`) under **Network adapters** or **Other devices**.
+3. Right-click and choose **Update Driver** -> **Browse my computer for drivers**.
+4. Point to the [`driver/`](driver/) folder and click **Next**.
+
